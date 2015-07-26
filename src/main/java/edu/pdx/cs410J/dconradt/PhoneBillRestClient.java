@@ -4,6 +4,7 @@ import edu.pdx.cs410J.web.HttpRequestHelper;
 
 import java.io.IOException;
 
+
 /**
  * A helper class for accessing the rest client.  Note that this class provides
  * an example of how to make gets and posts to a URL.  You'll need to change it
@@ -28,23 +29,47 @@ public class PhoneBillRestClient extends HttpRequestHelper
     }
 
     /**
-     * Returns all keys and values from the server
+     * Returns all phone call keys and values from the server
      */
-    public Response getAllKeysAndValues() throws IOException
+    public Response getPhoneBill() throws IOException
     {
-        return get(this.url );
+        return get(this.url);
     }
 
     /**
-     * Returns all values for the given key
+     * Returns all values for the given customer
      */
-    public Response getValues( String key ) throws IOException
+    public Response getValues( String customer ) throws IOException
     {
-        return get(this.url, "key", key);
+        return get(this.url, "customer", customer);
     }
 
-    public Response addKeyValuePair( String key, String value ) throws IOException
-    {
-        return post( this.url, "key", key, "value", value );
+    /**
+     * adds the phone call data to the list of calls
+     *
+     * @param customerName
+     * @param callerNumber
+     * @param calleeNumber
+     * @param startTime
+     * @param endTime
+     * @return
+     * @throws IOException
+     */
+    public Response addPhoneCall(String customerName, String callerNumber, String calleeNumber, String startTime, String endTime) throws IOException{
+
+        return post(this.url, "customer", customerName, "callerNumber", callerNumber, "calleeNumber", calleeNumber, "startTime", startTime, "endTime", endTime);
+    }
+
+    /**
+     * Used to search for calls between a start and stop time.
+     * @param customer
+     * @param start
+     * @param end
+     * @return
+     * @throws IOException
+     */
+    public Response getSearchValues(String customer, String start, String end )throws IOException{
+
+        return get(this.url, "customer", customer, "startTime", start, "endTime", end);
     }
 }
