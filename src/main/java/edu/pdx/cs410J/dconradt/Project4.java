@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author Dan Conradt 7/26/2015
+ *
  * Project4 class acts as a client and passes command line information to the server to do posts
  * and gets.
  */

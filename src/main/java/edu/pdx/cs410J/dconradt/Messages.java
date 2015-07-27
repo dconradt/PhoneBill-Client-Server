@@ -1,6 +1,8 @@
 package edu.pdx.cs410J.dconradt;
 
 /**
+ * @author David Whitlock
+ *
  * Class for formatting messages on the server side.  This is mainly to enable
  * test methods that validate that the server returned expected strings.
  */

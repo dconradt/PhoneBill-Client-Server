@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
+ * @author Dan Conradt 7/27/2015
+ *
  * This servlet provides a REST API for working with an
  * <code>PhoneBill</code>.   It processes requests to query the phone bill
  * and add to a phone bill.
@@ -34,10 +36,10 @@ public class PhoneBillServlet extends HttpServlet
         String customer = getParameter( "customer", request );
         String start = getParameter("startTime", request);
         String end = getParameter("endTime", request);
-        if(customer != null && start != null && end !=null && customer == newBill.getCustomer()){
+        if(start != null && end !=null && customer.equalsIgnoreCase(newBill.getCustomer())){
             searchCalls(newBill, response, start, end);
         }
-        else if ( customer != null && customer == newBill.getCustomer()) {
+        else if (customer.equalsIgnoreCase(newBill.getCustomer())) {
             prettyDump(newBill, response);
 
         } else {

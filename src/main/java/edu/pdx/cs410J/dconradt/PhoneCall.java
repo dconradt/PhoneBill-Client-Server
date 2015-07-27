@@ -7,6 +7,7 @@ import java.util.Date;
 
 /**
  * @author Dan Conradt on 6/28/2015.
+ *
  * The PhoneCall class manages the attributes of a phone call.
  */
 public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall> {

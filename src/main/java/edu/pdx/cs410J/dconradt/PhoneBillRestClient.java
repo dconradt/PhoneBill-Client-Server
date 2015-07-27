@@ -6,9 +6,11 @@ import java.io.IOException;
 
 
 /**
- * A helper class for accessing the rest client.  Note that this class provides
- * an example of how to make gets and posts to a URL.  You'll need to change it
- * to do something other than just send key/value pairs.
+ * @author Dan Conradt 7/27/2015
+ *
+ * A helper class for accessing the rest client.  This class provides
+ *  gets and posts to a URL.  The class handles adding a phone call
+ *  and searching for phone calls between to provided times.
  */
 public class PhoneBillRestClient extends HttpRequestHelper
 {
