@@ -14,18 +14,18 @@ import java.util.Collection;
 import java.util.Date;
 
 /**
- * This servlet ultimately provides a REST API for working with an
- * <code>PhoneBill</code>.  However, in its current state, it is an example
- * of how to use HTTP and Java servlets to store simple key/value pairs.
+ * This servlet provides a REST API for working with an
+ * <code>PhoneBill</code>.   It processes requests to query the phone bill
+ * and add to a phone bill.
  */
 public class PhoneBillServlet extends HttpServlet
 {
     static PhoneBill newBill = new PhoneBill(); // Instance of a phone bill to pass the new call to.
     /**
-     * Handles an HTTP GET request from a client by writing the value of the key
-     * specified in the "key" HTTP parameter to the HTTP response.  If the "key"
-     * parameter is not specified, all of the key/value pairs are written to the
-     * HTTP response.
+     * Handles an HTTP GET request from a client by writing the values of the phone bill given
+     * a customer in the HTTP parameter list to the HTTP response.  If the "customer"
+     * parameter is not specified, then then a message is sent to the HTTP response
+     * showing the customer parameter is required.
      */
     @Override
     protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException, IOException
@@ -34,14 +34,14 @@ public class PhoneBillServlet extends HttpServlet
         String customer = getParameter( "customer", request );
         String start = getParameter("startTime", request);
         String end = getParameter("endTime", request);
-        if(customer != null && start != null && end !=null){
+        if(customer != null && start != null && end !=null && customer == newBill.getCustomer()){
             searchCalls(newBill, response, start, end);
         }
-        else if ( customer != null) {
+        else if ( customer != null && customer == newBill.getCustomer()) {
             prettyDump(newBill, response);
 
         } else {
-            missingRequiredParameter(response, "customer or a date time");
+            missingRequiredParameter(response, "Missing or invalid customer, date/time");
         }
     }
 
@@ -53,7 +53,7 @@ public class PhoneBillServlet extends HttpServlet
      * @param end // End time to stop search for calls.
      * @throws IOException
      */
-    private void searchCalls(PhoneBill newBill, HttpServletResponse response, String start, String end) throws IOException {
+    private void searchCalls(PhoneBill newBill, HttpServletResponse response, String start, String end) throws ServletException, IOException {
         PrintWriter pw = response.getWriter();
         String customerName = newBill.getCustomer();
         Collection phoneCalls = newBill.getPhoneCalls();
@@ -63,14 +63,15 @@ public class PhoneBillServlet extends HttpServlet
         try {
             newStart = dateFormatter.parse(start);
         } catch (ParseException e) {
-            System.out.println(e.toString() + "Date Error");
-            System.exit(1);
+            missingRequiredParameter(response, "date time");
+            return;
         }
         try {
             newEnd = dateFormatter.parse(end);
         } catch (ParseException e) {
-            System.out.println("Date Error");
-            System.exit(1);
+            missingRequiredParameter(response, "date time");
+            return;
+
         }
         pw.println("Customer Phone Bill\nCustomer Name: " + customerName + "\n\n\tCaller Number\tCallee Number\t" +
                 "Starting Call Time\t\tEnding Call Time\t\tDuration of call\n");
@@ -105,15 +106,15 @@ public class PhoneBillServlet extends HttpServlet
                 sDate = dateFormatter.parse(getParameter("startTime", request));
                 newCall.setStartTime(sDate);
             } catch (ParseException e) {
-                System.out.println("Date Error");
-                System.exit(1);
+                response.setStatus( HttpServletResponse.SC_PRECONDITION_FAILED );
+                return;
             }
             try {
                 eDate = dateFormatter.parse(getParameter("endTime", request));
                 newCall.setEndTime(eDate);
             } catch (ParseException e) {
-                System.out.println("Date Error");
-                System.exit(1);
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return;
             }
             this.newBill.addPhoneCall(newCall);
         }else{
@@ -125,15 +126,15 @@ public class PhoneBillServlet extends HttpServlet
                 sDate = dateFormatter.parse(getParameter("startTime", request));
                 newCall.setStartTime(sDate);
             } catch (ParseException e) {
-                System.out.println("Date Error2");
-                System.exit(1);
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return;
             }
             try {
                 eDate = dateFormatter.parse(getParameter("endTime", request));
                 newCall.setEndTime(eDate);
             } catch (ParseException e) {
-                System.out.println("Date Error2");
-                System.exit(1);
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+                return;
             }
             this.newBill.addPhoneCall(newCall);
         }
@@ -154,48 +155,6 @@ public class PhoneBillServlet extends HttpServlet
         response.setStatus( HttpServletResponse.SC_PRECONDITION_FAILED );
     }
 
-    /**
-     * Writes the value of the given key to the HTTP response.
-     *
-     * The text of the message is formatted with {@link Messages#getMappingCount(int)}
-     * and {@link Messages#formatKeyValuePair(String, String)}
-     */
-   /* private void writeValue( String key, HttpServletResponse response ) throws IOException
-    {
-        Collection value = this.newBill.getPhoneCalls();
-
-
-        PrintWriter pw = response.getWriter();
-        //pw.println(Messages.getMappingCount( value != null ? 1 : 0 ));
-        //pw.println(Messages.formatKeyValuePair(key, value));
-
-        pw.flush();
-
-        response.setStatus( HttpServletResponse.SC_OK );
-    }*/
-
-    /**
-     * Writes all of the key/value pairs to the HTTP response.
-     *
-     * The text of the message is formatted with
-     * {@link Messages#formatKeyValuePair(String, String)}
-     */
-    /*private void writeAllMappings( HttpServletResponse response ) throws IOException
-    {
-        PrintWriter pw = response.getWriter();
-
-
-
-       // pw.println(Messages.getMappingCount( newCall ));
-
-        //for (Map.Entry<String, String> entry : this.newBill.entrySet()) {
-         //   pw.println(Messages.formatKeyValuePair(entry.getKey(), entry.getValue()));
-       // }
-
-        pw.flush();
-
-        response.setStatus( HttpServletResponse.SC_OK );
-    }*/
 
     /**
      * Prints the output in a pretty printer format.
@@ -212,7 +171,6 @@ public class PhoneBillServlet extends HttpServlet
             consolePrint((PhoneCall) billRecord, response, pw);
             pw.flush();
         }
-
         response.setStatus( HttpServletResponse.SC_OK );
     }
 
@@ -227,14 +185,14 @@ public class PhoneBillServlet extends HttpServlet
             endCall = dateFormatter.parse(billRecord.getEndTimeString());
         } catch (ParseException e) {
             pw.println("Error calculating phone call duration.");
-            System.exit(1);
+            return;
         }
         Date startCall = null;
         try {
             startCall = dateFormatter.parse(billRecord.getStartTimeString());
         } catch (ParseException e) {
             pw.println("Error calculating phone call duration.");
-            System.exit(1);
+            return;
         }
         long timeDifference = endCall.getTime() - startCall.getTime();
         int duration = (int)(timeDifference / (60 * 1000));

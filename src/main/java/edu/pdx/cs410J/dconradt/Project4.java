@@ -56,7 +56,7 @@ public class Project4 {
            response = client.addPhoneCall(customerName,callerNumber,calleeNumber,startTime,endTime);
 
         }catch (IOException e) {
-            System.out.println("Unable to add call information, jetty may not be running.");
+            System.out.println("Unable to process request, invalid host, port or jetty may not be running.");
             System.exit(1);
         }
         checkResponseCode( HttpURLConnection.HTTP_OK, response);
@@ -104,7 +104,7 @@ public class Project4 {
                 optionCount = optionCount + 2;
                 ++i;
             }else if (args[i].equalsIgnoreCase("-search")) {
-                if(args.length > 8) {
+                if(args.length >= 12) {
                     customerName = args[i + 1];
                     timeStamp = args[i + 2] + " " + args[i + 3] + " " + args[i + 4];
                     success = verifyDateFormat(timeStamp); // verify data and time format
@@ -123,6 +123,9 @@ public class Project4 {
                     return;
                 }else
                     System.out.println("Missing the start time and end time parameters.");
+            }else if( args[i].startsWith("-")) {
+                System.out.println("The option " + args[i] + " is not valid.");
+                System.exit(1);
             }
         }
 
@@ -132,10 +135,10 @@ public class Project4 {
             System.exit(1);
         }
         else if( portString == null) {
-            System.out.println("Missing port.");
+            System.out.println("Missing port option or port name.");
             System.exit(1);
         }else if( hostName == null){
-            System.out.println("Missing hostname.");
+            System.out.println("Missing host option or host name.");
             System.exit(1);
         }
         argIndex = optionCount;
