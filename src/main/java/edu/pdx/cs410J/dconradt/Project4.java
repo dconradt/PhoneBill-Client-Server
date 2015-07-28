@@ -90,10 +90,10 @@ public class Project4 {
                 print = true;
                 ++optionCount;
             }else if (args[i].equalsIgnoreCase("-README")) {
-                System.out.println("\n***README***\n\nDan Conradt - Project4\n\nI have implemented a client server application for a phone bill.  There is a PhoneBillServlet which responds to http calls using a RESTful client, PhoneBillRestClient," +
-                        ".  The program will take input from command line arguments or url requests. It maintains the functionality of adding a new phone call to a phone bill, displaying all calls " +
-                        "in a phone bill, search for calls given a date/time range, print a phone call that was just added and print the README file.  The input phone numbers and call dates are verified" +
-                        " to be of the correct format.  The purpose of this program is to understand working with a server application and client interfaces all within the same " +
+                System.out.println("\n***README***\n\nDan Conradt - Project4\n\nI have implemented a client server application for a phone bill.  There is a PhoneBillServlet which responds to http calls using a RESTful client,\nPhoneBillRestClient" +
+                        ".  The program will take input from command line arguments or url requests. It maintains the functionality of adding a new phone\ncall to a phone bill, displaying all calls " +
+                        "in a phone bill, search for calls given a date/time range, print a phone call that was just added and print\nthe README file.  The input phone numbers and call dates are verified" +
+                        " to be of the correct format.  The purpose of this program is to understand working\nwith a server application and client interfaces all within the same " +
                         "code body.");
                 System.exit(1);
             } else if (args[i].equalsIgnoreCase("-host")) {
